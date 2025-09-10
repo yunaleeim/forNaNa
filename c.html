@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>길나현 CPA 올인 페이지</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .sticker{box-shadow:0 8px 24px rgba(59,130,246,.25)}
+    .wiggle{animation:wiggle 1.3s ease-in-out infinite}
+    @keyframes wiggle{0%,100%{transform:rotate(-1deg)}50%{transform:rotate(1deg)}}
+    .tab-active{background:#3b82f6;color:#fff}
+    .tab-inactive{background:#e6f0ff;color:#1d4ed8}
+    .ghost{opacity:.6}
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-b from-sky-50 to-indigo-50 text-slate-800">
+  <!-- 헤더 -->
+  <header class="max-w-5xl mx-auto px-4 pt-10 pb-4">
+    <div class="flex items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-2xl bg-sky-400 text-white flex items-center justify-center text-2xl sticker">💙</div>
+        <div>
+          <h1 class="text-2xl sm:text-3xl font-bold text-sky-700">길나현 CPA 올인 페이지</h1>
+          <p class="text-sm text-slate-500">재시는 없다. 인생은 한 방! · 연세대 정외 휴학 · 2004.03.12</p>
+        </div>
+      </div>
+      <!-- 저장 모드/서버 주소 (공유 방명록용 옵션) -->
+      <div class="text-sm flex items-center gap-2">
+        <label>저장 모드:
+          <select id="modeSel" class="rounded-lg border border-slate-300 px-2 py-1">
+            <option value="local">로컬</option>
+            <option value="server">서버</option>
+          </select>
+        </label>
+        <label id="serverRow" class="ghost">서버:
+          <input id="serverUrl" placeholder="http://localhost:3000" class="rounded-lg border border-slate-300 px-2 py-1 w-44">
+        </label>
+      </div>
+    </div>
+  </header>
+
+  <!-- 상단: D-Day / 남은 비율 -->
+  <section class="max-w-5xl mx-auto px-4">
+    <div class="grid md:grid-cols-2 gap-6">
+      <!-- 좌: 시험 타임라인 & D-Day -->
+      <div class="bg-white/80 backdrop-blur rounded-2xl p-6 sticker">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-bold text-sky-700">시험 타임라인 & D-Day</h2>
+          <label class="inline-flex items-center gap-2 text-sm">
+            <input id="passed1" type="checkbox" class="rounded border-slate-300 text-sky-600 focus:ring-sky-500">
+            <span>1차 합격 처리</span>
+          </label>
+        </div>
+
+        <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <!-- 1차 -->
+          <div class="rounded-xl border border-sky-100 p-4 bg-sky-50">
+            <div class="text-sm text-slate-500">CPA 1차</div>
+            <div class="mt-1 text-lg font-semibold">2026-03-01</div>
+            <div class="mt-2 flex items-end justify-between">
+              <div class="text-sm text-slate-500">(KST 기준)</div>
+              <div class="text-2xl font-extrabold text-sky-700" id="dday1">D-—</div>
+            </div>
+            <div class="text-xs text-slate-500" id="left1">남은: —일</div>
+          </div>
+
+          <!-- 2차 -->
+          <div class="rounded-xl border border-indigo-100 p-4 bg-indigo-50">
+            <div class="text-sm text-slate-500">CPA 2차 (1차 합격 시)</div>
+            <div class="mt-1 text-lg font-semibold">2026-06-27–28</div>
+            <div class="mt-2 flex items-end justify-between">
+              <div class="text-sm text-slate-500">(KST 기준)</div>
+              <div class="text-2xl font-extrabold text-indigo-700" id="dday2">D-—</div>
+            </div>
+            <div class="text-xs text-slate-500" id="left2">남은: —일</div>
+          </div>
+        </div>
+
+        <p class="mt-3 text-xs text-slate-500">※ 스위치를 켜면 ‘활성 시험’이 2차로 전환됩니다.</p>
+      </div>
+
+      <!-- 우: 원형 남은 비율 -->
+      <div class="bg-white/80 backdrop-blur rounded-2xl p-6 sticker">
+        <h2 class="text-xl font-bold text-sky-700">남은 비율 (100% = 시험일까지 남은 비중)</h2>
+        <p class="text-sm text-slate-500">시작 기준일 <span class="font-semibold">2024-03-01</span> → 활성 시험일까지 남은 비율.</p>
+
+        <div class="mt-5 flex items-center gap-6">
+          <svg width="170" height="170" viewBox="0 0 120 120" class="mx-auto">
+            <defs>
+              <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#3B82F6"/>
+                <stop offset="100%" stop-color="#22D3EE"/>
+              </linearGradient>
+            </defs>
+            <circle cx="60" cy="60" r="50" fill="none" stroke="#e5edff" stroke-width="12" />
+            <circle id="progressArc" cx="60" cy="60" r="50" fill="none" stroke="url(#g1)" stroke-width="12" stroke-linecap="round" stroke-dasharray="0 999" transform="rotate(-90 60 60)" />
+            <text id="percentText" x="60" y="54" text-anchor="middle" class="fill-slate-700" style="font:800 22px/1.15 ui-sans-serif,system-ui">--%</text>
+            <text id="daysLeftText" x="60" y="78" text-anchor="middle" class="fill-slate-500" style="font:600 12px/1.1 ui-sans-serif,system-ui">남은 0일</text>
+          </svg>
+
+          <div class="flex-1 text-sm">
+            <div class="text-slate-600">시작 기준일: <span class="font-semibold">2024-03-01</span> (고정)</div>
+            <div class="mt-1 text-slate-600">활성 시험: <span class="font-semibold" id="activeExamLabel">CPA 1차</span></div>
+            <div class="mt-2 flex gap-2">
+              <button id="refreshCheer" class="px-3 py-1.5 rounded-lg bg-sky-600 text-white text-xs font-semibold hover:bg-sky-700">오늘의 응원 새로고침</button>
+              <button id="forceNewCheer" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white text-xs font-semibold hover:bg-indigo-700">오늘 것 다시 뽑기</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 오늘의 응원 -->
+  <section class="max-w-5xl mx-auto px-4 mt-8">
+    <div class="bg-white/80 backdrop-blur rounded-2xl p-6 sticker">
+      <h2 class="text-xl font-bold text-sky-700">오늘의 응원</h2>
+      <div id="cheerCard" class="mt-3 p-4 rounded-xl bg-sky-50 border border-sky-100 text-sky-800">불러오는 중…</div>
+    </div>
+  </section>
+
+  <!-- 로드맵 -->
+  <section class="max-w-5xl mx-auto px-4 mt-8">
+    <div class="bg-sky-600 text-white rounded-2xl p-6 sticker">
+      <div class="grid sm:grid-cols-5 gap-3">
+        <div class="bg-white/15 rounded-xl p-3 text-center">1) 너희들과 합격 파티 🎉</div>
+        <div class="bg-white/15 rounded-xl p-3 text-center">2) 미국 교환학생 🌎</div>
+        <div class="bg-white/15 rounded-xl p-3 text-center">3) 너희와 졸업 여행 ✈️</div>
+        <div class="bg-white/15 rounded-xl p-3 text-center">4) 삼일 회계법인 입사 🧾</div>
+        <div class="bg-white/15 rounded-xl p-3 text-center">5) 투자 성공 → 백만장자 💎</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 웹사이트 탭 -->
+  <section class="max-w-5xl mx-auto px-4 mt-8">
+    <div class="bg-white/80 backdrop-blur rounded-2xl p-6 sticker">
+      <div class="flex items-center justify-between flex-wrap gap-2">
+        <h2 class="text-xl font-bold text-sky-700">웹사이트 모음</h2>
+        <div class="inline-flex rounded-xl overflow-hidden">
+          <button id="tabEdu" class="px-3 py-1.5 text-sm font-semibold tab-active">인강 웹사이트</button>
+          <button id="tabOfficial" class="px-3 py-1.5 text-sm font-semibold tab-inactive">공식·필수 사이트</button>
+        </div>
+      </div>
+
+      <div id="paneEdu" class="mt-4 grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <a class="block rounded-xl p-4 bg-sky-50 border border-sky-100 hover:shadow" href="https://www.namucpa.com" target="_blank" rel="noopener">나무경영 아카데미 ↗</a>
+        <a class="block rounded-xl p-4 bg-sky-50 border border-sky-100 hover:shadow" href="https://www.uricpa.com" target="_blank" rel="noopener">우리경영 아카데미 ↗</a>
+        <a class="block rounded-xl p-4 bg-sky-50 border border-sky-100 hover:shadow" href="https://www.smartcpa.kr" target="_blank" rel="noopener">스마트경영 아카데미 ↗</a>
+      </div>
+
+      <div id="paneOfficial" class="mt-4 grid sm:grid-cols-2 lg:grid-cols-3 gap-3 hidden">
+        <a class="block rounded-xl p-4 bg-sky-50 border border-sky-100 hover:shadow" href="https://cpa.fss.or.kr" target="_blank" rel="noopener">금융감독원 CPA ↗</a>
+        <a class="block rounded-xl p-4 bg-sky-50 border border-sky-100 hover:shadow" href="https://www.kicpa.or.kr" target="_blank" rel="noopener">KICPA ↗</a>
+        <a class="block rounded-xl p-4 bg-sky-50 border border-sky-100 hover:shadow" href="https://www.kasb.or.kr" target="_blank" rel="noopener">KASB ↗</a>
+        <a class="block rounded-xl p-4 bg-sky-50 border border-sky-100 hover:shadow" href="https://dart.fss.or.kr" target="_blank" rel="noopener">DART ↗</a>
+        <a class="block rounded-xl p-4 bg-sky-50 border border-sky-100 hover:shadow" href="https://www.fsc.go.kr" target="_blank" rel="noopener">금융위원회 ↗</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 방명록 -->
+  <section class="max-w-5xl mx-auto px-4 mt-8 mb-12">
+    <div class="bg-white/80 backdrop-blur rounded-2xl p-6 sticker">
+      <div class="flex items-center justify-between">
+        <h2 class="text-xl font-bold text-sky-700">친구들의 편지 방명록</h2>
+        <span id="modeLabel" class="text-xs text-slate-500">로컬 저장</span>
+      </div>
+      <form id="guestForm" class="mt-4 grid sm:grid-cols-6 gap-3">
+        <input id="guestName" class="sm:col-span-2 rounded-xl border-slate-200 focus:border-sky-400 focus:ring-sky-400" placeholder="이름(또는 이모지)" maxlength="20" required />
+        <input id="guestMsg" class="sm:col-span-3 rounded-xl border-slate-200 focus:border-sky-400 focus:ring-sky-400" placeholder="한 줄 응원(최대 120자)" maxlength="120" required />
+        <button class="sm:col-span-1 rounded-xl bg-sky-600 text-white font-semibold hover:bg-sky-700">남기기</button>
+      </form>
+      <ul id="guestList" class="mt-4 space-y-3"></ul>
+    </div>
+  </section>
+
+  <footer class="text-center text-xs text-slate-500 pb-10">Made with 💙 for Nahyun’s One-Shot CPA</footer>
+
+  <script>
+    /* ===== 날짜 고정 ===== */
+    const START_FIXED   = new Date('2024-03-01T00:00:00+09:00');
+    const EXAM_1        = new Date('2026-03-01T00:00:00+09:00');
+    const EXAM_2_START  = new Date('2026-06-27T00:00:00+09:00');
+
+    /* ===== 유틸 ===== */
+    const clamp=(n,min,max)=>Math.min(Math.max(n,min),max);
+    const dayDiff=(a,b)=>Math.ceil((b-a)/86400000);
+    const $=s=>document.querySelector(s);
+
+    /* ===== 모드/서버 설정 ===== */
+    const modeSel = $('#modeSel'), serverRow = $('#serverRow'), serverUrl = $('#serverUrl'), modeLabel = $('#modeLabel');
+    function loadSettings(){
+      const s = JSON.parse(localStorage.getItem('nahyun_settings')||'{}');
+      modeSel.value = s.mode || 'local';
+      serverUrl.value = s.server || 'http://localhost:3000';
+      serverRow.classList.toggle('ghost', modeSel.value!=='server');
+      modeLabel.textContent = (modeSel.value==='server'?'서버 공유 저장':'로컬 저장');
+    }
+    function saveSettings(){
+      const s = { mode: modeSel.value, server: serverUrl.value };
+      localStorage.setItem('nahyun_settings', JSON.stringify(s));
+      serverRow.classList.toggle('ghost', modeSel.value!=='server');
+      modeLabel.textContent = (modeSel.value==='server'?'서버 공유 저장':'로컬 저장');
+    }
+    modeSel.addEventListener('change', ()=>{ saveSettings(); loadMessages(); });
+    serverUrl.addEventListener('change', ()=>{ saveSettings(); loadMessages(); });
+
+    /* ===== 1차 합격 스위치 ===== */
+    const passed1El = $('#passed1');
+    function loadState(){ return { passed1: localStorage.getItem('nahyun_passed1')==='1' }; }
+    function saveState(st){ localStorage.setItem('nahyun_passed1', st.passed1?'1':'0'); }
+
+    /* ===== D-Day ===== */
+    function renderDday(){
+      const now=new Date();
+      const left1=Math.max(0, dayDiff(now, EXAM_1));
+      const left2=Math.max(0, dayDiff(now, EXAM_2_START));
+      $('#dday1').textContent = left1===0?'D-DAY':`D-${left1}`;
+      $('#left1').textContent = `남은: ${left1}일`;
+      $('#dday2').textContent = left2===0?'D-DAY':`D-${left2}`;
+      $('#left2').textContent = `남은: ${left2}일`;
+      const hero=document.querySelector('section .sticker');
+      (left1<=30||left2<=30)? hero.classList.add('wiggle') : hero.classList.remove('wiggle');
+    }
+
+    /* ===== 남은 비율 ===== */
+    function renderProgress(){
+      const st=loadState();
+      const active= st.passed1? EXAM_2_START : EXAM_1;
+      $('#activeExamLabel').textContent = `CPA ${st.passed1? '2차':'1차'}`;
+      const now=new Date();
+      const total= Math.max(0, active-START_FIXED);
+      const left = Math.max(0, active-now);
+      const pctLeft = total>0 ? (left/total)*100 : 0;
+      const C = 2*Math.PI*50;
+      $('#progressArc').setAttribute('stroke-dasharray', `${C*clamp(pctLeft,0,100)/100} ${C}`);
+      $('#percentText').textContent = `${Math.round(pctLeft)}%`;
+      $('#daysLeftText').textContent = `남은 ${Math.ceil(left/86400000)}일`;
+    }
+
+    /* ===== 오늘의 응원: cheers.json + 덱 ===== */
+    const CHEER_DB_URL = './cheers.json'; // index.html과 같은 폴더
+    const todayKey = ()=> new Date().toISOString().slice(0,10);
+
+    function readLS(key,fallback){ try{ return JSON.parse(localStorage.getItem(key) ?? JSON.stringify(fallback)); }catch{ return fallback; } }
+    function writeLS(key,val){ localStorage.setItem(key, JSON.stringify(val)); }
+
+    // 캐시 우회 포함 (서버에서 최신 파일 강제 로딩)
+    async function loadCheerDB(){
+      const r = await fetch(`${CHEER_DB_URL}?t=${Date.now()}`, { cache:'no-store' });
+      if(!r.ok) throw new Error('cheers.json 로드 실패');
+      return await r.json(); // [{id,category,text}, ...]
+    }
+
+    function ensureDeck(size){
+      const raw = readLS('cheer.deck', null);
+      const pos = Number(localStorage.getItem('cheer.deck_pos')||'0');
+      if (Array.isArray(raw) && raw.length===size) return { deck: raw, pos: isNaN(pos)?0:pos };
+      // 새 덱(0..size-1) 셔플
+      const deck=[...Array(size).keys()];
+      for(let i=size-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [deck[i],deck[j]]=[deck[j],deck[i]]; }
+      writeLS('cheer.deck', deck); localStorage.setItem('cheer.deck_pos','0');
+      return { deck, pos:0 };
+    }
+    function saveDeck(deck,pos){ writeLS('cheer.deck', deck); localStorage.setItem('cheer.deck_pos', String(pos)); }
+
+    function pickCheer(db, {forceNewToday=false}={}){
+      const k = todayKey();
+      const cached = readLS('cheer.today', null);
+      if(!forceNewToday && cached && cached.date===k) return cached.item;
+
+      // 카테고리 번갈아 쓰기(짝수일 cheer, 홀수일 growth)
+      const prefer = (new Date().getDate()%2===0)? 'cheer':'growth';
+
+      let {deck,pos} = ensureDeck(db.length);
+      if(pos>=deck.length){ // 한 바퀴 다 썼으면 섞고 처음부터
+        for(let i=deck.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [deck[i],deck[j]]=[deck[j],deck[i]]; }
+        pos=0;
+      }
+
+      // 선호 카테고리를 만족하는 다음 아이템 찾기(최대 deck 길이만큼 탐색)
+      let chosenIndex = null;
+      for(let step=0; step<deck.length; step++){
+        const idx = deck[(pos+step)%deck.length];
+        if(db[idx]?.category===prefer){ chosenIndex=idx; pos=(pos+step+1)%deck.length; break; }
+      }
+      if(chosenIndex===null){ chosenIndex=deck[pos]; pos=(pos+1)%deck.length; }
+
+      saveDeck(deck,pos);
+      const item = db[chosenIndex];
+      writeLS('cheer.today', { date:k, item });
+      return item;
+    }
+
+    async function renderCheer({forceNewToday=false}={}){
+      const card = $('#cheerCard');
+      card.textContent = '불러오는 중…';
+      try{
+        const db = await loadCheerDB();
+        const item = pickCheer(db, {forceNewToday});
+        card.textContent = item.text;
+      }catch(e){
+        const fallback = [
+          '오늘도 한 문제 더! 💙',
+          '작은 꾸준함이 큰 변화를 만듭니다 ✨',
+          '집중 25분, 휴식 5분 ⏱️',
+          '기출은 최고의 스승 📘'
+        ];
+        card.textContent = fallback[Math.floor(Math.random()*fallback.length)];
+        console.warn(e);
+      }
+    }
+
+    // 같은 날이면 같은 문구 유지
+    $('#refreshCheer').addEventListener('click', ()=>renderCheer());
+
+    // 오늘 강제 재추첨: 오늘 캐시 삭제 + 덱 포인터 한 칸 이동(연속 중복 방지)
+    $('#forceNewCheer').addEventListener('click', ()=>{
+      localStorage.removeItem('cheer.today');
+      try{
+        const deck = JSON.parse(localStorage.getItem('cheer.deck')||'[]');
+        let pos = parseInt(localStorage.getItem('cheer.deck_pos')||'0',10);
+        if (deck.length) { pos = (pos+1) % deck.length; localStorage.setItem('cheer.deck_pos', String(pos)); }
+      }catch{}
+      renderCheer({forceNewToday:true});
+    });
+
+    /* ===== 탭 ===== */
+    const tabEdu=$('#tabEdu'), tabOfficial=$('#tabOfficial'), paneEdu=$('#paneEdu'), paneOfficial=$('#paneOfficial');
+    function activateTab(which){
+      const edu = which==='edu';
+      paneEdu.classList.toggle('hidden', !edu);
+      paneOfficial.classList.toggle('hidden', edu);
+      tabEdu.classList.toggle('tab-active', edu); tabEdu.classList.toggle('tab-inactive', !edu);
+      tabOfficial.classList.toggle('tab-active', !edu); tabOfficial.classList.toggle('tab-inactive', edu);
+    }
+    tabEdu.addEventListener('click', ()=>activateTab('edu'));
+    tabOfficial.addEventListener('click', ()=>activateTab('official'));
+
+    /* ===== 방명록 (로컬/서버) ===== */
+    function escapeHTML(s){return (s+'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+    async function loadMessages(){
+      const s = JSON.parse(localStorage.getItem('nahyun_settings')||'{}');
+      if(s.mode==='server'){
+        try{
+          const r = await fetch((s.server||'').replace(/\/$/,'') + '/api/messages');
+          if(!r.ok) throw 0;
+          const data = await r.json();
+          renderGuestbookList(data.messages||[]);
+          return;
+        }catch(e){
+          // 서버 실패 시 로컬로 폴백
+        }
+      }
+      const items = JSON.parse(localStorage.getItem('nahyun_guestbook')||'[]');
+      renderGuestbookList(items);
+    }
+
+    function renderGuestbookList(items){
+      const list = (items||[]).slice().sort((a,b)=> (b.ts||b.createdAt) - (a.ts||a.createdAt)).slice(0,50);
+      const ul = $('#guestList'); ul.innerHTML='';
+      if(list.length===0){ ul.innerHTML = '<li class="text-sm text-slate-500">첫 응원을 남겨보세요 💙</li>'; return; }
+      for(const it of list){
+        const li=document.createElement('li'); li.className='p-3 rounded-xl bg-sky-50 border border-sky-100';
+        const when=new Date(it.ts||it.createdAt);
+        li.innerHTML=`<div class="text-sm"><span class="font-semibold text-sky-700">${escapeHTML(it.name)}</span> · <span class="text-slate-500">${when.toLocaleString()}</span></div><div class="text-slate-700">${escapeHTML(it.text||it.msg)}</div>`;
+        ul.appendChild(li);
+      }
+    }
+
+    async function submitMessage(name, text){
+      const s = JSON.parse(localStorage.getItem('nahyun_settings')||'{}');
+      if(s.mode==='server'){
+        const url = (s.server||'').replace(/\/$/,'') + '/api/messages';
+        const r = await fetch(url, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ name, text }) });
+        if(!r.ok) throw new Error('서버 오류');
+        const data = await r.json(); renderGuestbookList(data.messages||[]); return;
+      }
+      // 로컬
+      const items = JSON.parse(localStorage.getItem('nahyun_guestbook')||'[]');
+      items.push({ name, text, ts: Date.now() });
+      localStorage.setItem('nahyun_guestbook', JSON.stringify(items));
+      renderGuestbookList(items);
+    }
+
+    $('#guestForm').addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const name=$('#guestName').value.trim(), text=$('#guestMsg').value.trim();
+      if(!name||!text) return;
+      try{ await submitMessage(name,text); $('#guestMsg').value=''; }catch(err){ alert('저장 실패: '+err.message); }
+    });
+
+    /* ===== 초기화 ===== */
+    function boot(){
+      loadSettings();
+      const st=loadState(); passed1El.checked=st.passed1;
+      activateTab('edu');
+      renderDday(); renderProgress(); renderCheer(); loadMessages();
+      setInterval(()=>{ renderDday(); renderProgress(); }, 60000);
+    }
+    passed1El.addEventListener('change', ()=>{ const st=loadState(); st.passed1=passed1El.checked; saveState(st); renderProgress(); renderCheer(); });
+    boot();
+  </script>
+</body>
+</html>
